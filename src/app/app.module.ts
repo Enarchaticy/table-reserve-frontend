@@ -3,16 +3,30 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HttpClientModule } from '@angular/common/http';
+import { UserMenuComponent } from './shared/dialogs/user-menu/user-menu.component';
+
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { OVERLAY_PROVIDERS } from '@angular/cdk/overlay';
+import { StorageServiceModule } from 'ngx-webstorage-service';
 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
+  declarations: [AppComponent, UserMenuComponent],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    HttpClientModule,
+    MatButtonModule,
+    MatToolbarModule,
+    MatIconModule,
+    StorageServiceModule,
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  entryComponents: [UserMenuComponent],
+  providers: [OVERLAY_PROVIDERS],
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

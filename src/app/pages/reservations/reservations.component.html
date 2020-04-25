@@ -1,0 +1,6 @@
+<div class="align-to-center" *ngFor="let reservationsByDay of reservations">
+  <span>{{reservationsByDay.date | dateWithDay}}</span>
+  <app-place-details-card *ngFor="let reservation of reservationsByDay.reservation" [place]="reservation"
+    [date]="reservationsByDay.date">
+  </app-place-details-card>
+</div>

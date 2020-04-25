@@ -1,0 +1,15 @@
+mat-card {
+    margin: 15px;
+    display: flex;
+    cursor: pointer;
+
+    span {
+        font-weight: bold;
+    }
+
+    .time-display {
+        position: absolute;
+        right: 17px;
+    }    
+}
+

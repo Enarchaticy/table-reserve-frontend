@@ -1,0 +1,24 @@
+form {
+    margin: 15px;
+    margin-bottom: 0px;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.half-width {
+    width: calc(50% - 14px);
+    margin-left: 7px;
+    margin-right: 7px;
+}
+
+.day-name {
+    width: 100%;
+    margin-bottom: 3px;
+}
+
+mat-slide-toggle {
+    right: 25px;
+    position: absolute;
+}

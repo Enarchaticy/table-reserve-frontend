@@ -1,0 +1,16 @@
+ <form *ngIf="nameForm" [formGroup]="nameForm">
+   <mat-form-field class="full-width">
+     <input matInput placeholder="Új név" formControlName="name" appForbiddenName="user.name">
+     <mat-error *ngIf="nameForm.controls.name.hasError('required')">
+       A név mező nem lehet üres!
+     </mat-error>
+     <mat-error *ngIf="nameForm.controls.name.hasError('appForbiddenName')">
+       A név mező nem lehet üres!
+     </mat-error>
+   </mat-form-field>
+   <div class="buttons">
+     <button mat-stroked-button (click)="resetNameForm()">Mégsem</button>
+     <button mat-raised-button color="primary" (click)="submitName()"
+       [disabled]="nameForm.invalid || nameForm.value.name===user.name">Beállítás</button>
+   </div>
+ </form>

@@ -1,0 +1,40 @@
+mat-form-field {
+    margin: 15px;
+    width: calc(100% - 30px);
+    margin-bottom: 0px;
+}
+
+svg {
+    margin: 15px;
+    width: calc(100% - 30px);
+    background-color: #f5f5f5;
+    border: 1px solid #afafaf;
+
+    * {
+        cursor: pointer;
+    }
+
+    .free-table {
+        stroke: #afafaf;
+        stroke-width: 1;
+        fill: white;
+    }
+
+    .reserved-table {
+        fill: #cfcfcf;
+        stroke-width: 2;
+    }
+
+    .selected-table {
+        stroke-width: 3px;
+        stroke: blue;
+    }
+
+    text {
+        // .free-table-text
+        dominant-baseline: middle;
+        text-anchor: middle;
+        font-family: Verdana;
+        fill: blue;
+    }
+}
