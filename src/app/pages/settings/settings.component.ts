@@ -1,20 +1,30 @@
-import { LocalStorageService } from './../../shared/services/local-storage.service';
-import { UserService } from './../../shared/services/user.service';
+import { Subscription } from 'rxjs';
+import { ApiResponse } from './../../models/api-response';
+import { User } from './../../models/user';
+import { UserService } from '../../services/user.service';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss'],
 })
-export class SettingsComponent implements OnInit {
+export class SettingsComponent implements OnInit, OnDestroy {
   nameForm: FormGroup;
-  user: { id: string; name: string };
-  constructor(private userService: UserService, private localStorageService: LocalStorageService) {}
+  user: User = {};
+  userSubs: Subscription;
+
+  constructor(private userService: UserService) {}
 
   ngOnInit() {
-    this.getUser();
+    this.getUser(localStorage.getItem('name'));
+  }
+
+  ngOnDestroy(): void {
+    if (this.userSubs) {
+      this.userSubs.unsubscribe();
+    }
   }
 
   resetNameForm() {
@@ -22,15 +32,15 @@ export class SettingsComponent implements OnInit {
   }
 
   submitName() {
-    this.userService.updateUser({ id: this.user.id, name: this.nameForm.value.name }).subscribe(() => {
-      this.getUser();
+    const name = this.nameForm.value.name;
+    this.userSubs = this.userService.updateUser({ name }).subscribe((res: ApiResponse) => {
+      this.getUser(name);
+      localStorage.setItem('name', name);
     });
   }
 
-  getUser() {
-    this.userService.getUser(this.localStorageService.get('userId')).subscribe((res: any) => {
-      this.user = res;
-      this.resetNameForm();
-    });
+  getUser(name: string) {
+    this.user.name = name;
+    this.resetNameForm();
   }
 }

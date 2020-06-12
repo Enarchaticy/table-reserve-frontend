@@ -1,5 +1,6 @@
-import { HelperMethodsService } from './../../shared/services/helper-methods.service';
-import { PlaceService } from '../../shared/services/place.service';
+import { Place } from './../../models/place';
+import { HelperMethodsService } from '../../services/helper-methods.service';
+import { PlaceService } from '../../services/place.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 
@@ -9,8 +10,8 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit, OnDestroy {
-  places: any;
-  placesToShow: any;
+  places: Place[];
+  placesToShow: Place[];
   placeSub: Subscription;
   name = '';
   constructor(private placeService: PlaceService, private helperMethodsService: HelperMethodsService) {}

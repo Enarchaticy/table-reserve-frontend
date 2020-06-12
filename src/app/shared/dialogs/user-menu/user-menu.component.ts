@@ -16,6 +16,7 @@ export class UserMenuComponent {
   }
 
   logout() {
-    console.log('még nem :D');
+    localStorage.clear();
+    this.router.navigateByUrl('authentication');
   }
 }

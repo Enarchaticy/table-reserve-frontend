@@ -1,9 +1,9 @@
 import { UserMenuComponent } from './shared/dialogs/user-menu/user-menu.component';
 import { DialogService } from './shared/dialogs/dialog.service';
-import { TableService } from './shared/services/table.service';
-import { PlaceService } from './shared/services/place.service';
-import { UserService } from './shared/services/user.service';
-import { ReservationService } from './shared/services/reservation.service';
+import { TableService } from './services/table.service';
+import { PlaceService } from './services/place.service';
+import { UserService } from './services/user.service';
+import { ReservationService } from './services/reservation.service';
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { ComponentPortal } from '@angular/cdk/portal';
@@ -19,13 +19,12 @@ export class AppComponent {
 
   constructor(
     private reservationService: ReservationService,
-    private userService: UserService,
+    public userService: UserService,
     private placeService: PlaceService,
     private tableService: TableService,
     public router: Router,
     private dialogService: DialogService
   ) {
-
     /*  --------------------------CREATE---------------------------
     this.reservationService.createReservation({userId: 'asd', date: new Date().toISOString()}).subscribe();
     this.userService.createUser({name: 'asd'}).subscribe(x => console.log(x));

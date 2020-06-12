@@ -1,42 +1,13 @@
-import { HelperMethodsService } from './../../shared/services/helper-methods.service';
+import { Place } from './../../models/place';
+import { Reservation } from './../../models/reservation';
+import { Table } from './../../models/table';
+import { HelperMethodsService } from '../../services/helper-methods.service';
 import { Subscription } from 'rxjs';
-import { LocalStorageService } from './../../shared/services/local-storage.service';
-import { ReservationService } from './../../shared/services/reservation.service';
-import { TableService } from './../../shared/services/table.service';
-import { PlaceService } from './../../shared/services/place.service';
+import { ReservationService } from '../../services/reservation.service';
+import { TableService } from '../../services/table.service';
+import { PlaceService } from '../../services/place.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { FormControl } from '@angular/forms';
-
-export interface TableInterface {
-  id: string;
-  seats: number;
-  x: number;
-  y: number;
-}
-
-export interface Table extends TableInterface {
-  shape: string;
-  width?: number;
-  height?: number;
-  radius?: number;
-}
-
-export interface Circle extends TableInterface {
-  radius: number;
-  reservation?: Reservation;
-}
-
-export interface Rect extends TableInterface {
-  width: number;
-  height: number;
-  reservation?: Reservation;
-}
-
-export interface Reservation {
-  person: string;
-  from: string;
-}
 
 @Component({
   selector: 'app-place',
@@ -51,11 +22,11 @@ export class PlaceComponent implements OnInit, OnDestroy {
   height: number;
   fontSize: number;
 
-  circles = [];
-  rects = [];
-  tables: any;
-  reservations: any;
-  place: any;
+  circles: Table[] = [];
+  rects: Table[] = [];
+  tables: Table[];
+  reservations: Reservation[];
+  place: Place;
 
   tableSubs: Subscription;
   reservationSubs: Subscription;
@@ -66,7 +37,6 @@ export class PlaceComponent implements OnInit, OnDestroy {
     private reservationService: ReservationService,
     private placeService: PlaceService,
     private tableService: TableService,
-    private localStorageService: LocalStorageService,
     private helperMethodsService: HelperMethodsService
   ) {}
 
@@ -97,9 +67,8 @@ export class PlaceComponent implements OnInit, OnDestroy {
 
   getPlace(placeId: string) {
     this.placeSubs = this.placeService.getPlace(placeId).subscribe(
-      (placeRes) => {
+      (placeRes: Place) => {
         this.place = placeRes;
-        console.log(this.place);
       },
       (err) => console.error(err)
     );
@@ -107,7 +76,7 @@ export class PlaceComponent implements OnInit, OnDestroy {
 
   getTables(placeId: string) {
     this.tableSubs = this.tableService.getTablesByPlace(placeId).subscribe(
-      (tableRes) => (this.tables = tableRes),
+      (tableRes: Table[]) => (this.tables = tableRes),
       (err) => console.error(err),
       () => this.createFloorMap()
     );
@@ -119,7 +88,7 @@ export class PlaceComponent implements OnInit, OnDestroy {
     this.reservationSubs = this.reservationService
       .getReservationsByDateAndPlace(this.helperMethodsService.getRealIsoDate(this.date.value), placeId)
       .subscribe(
-        (reservationRes) => (this.reservations = reservationRes),
+        (reservationRes: Reservation[]) => (this.reservations = reservationRes),
         (err) => console.error(err),
         () => {
           if (this.rects.length > 0 || this.circles.length > 0) {
@@ -130,8 +99,8 @@ export class PlaceComponent implements OnInit, OnDestroy {
   }
 
   getStorageData() {
-    this.placeId = this.localStorageService.get('placeId');
-    const date = this.localStorageService.get('date');
+    this.placeId = localStorage.getItem('placeId');
+    const date = localStorage.getItem('date');
     if (date !== 'undefined') {
       this.date = new FormControl(new Date(new Date(date).setHours(0, 0, 0, 0)));
     } else {

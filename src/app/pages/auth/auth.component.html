@@ -1,0 +1,56 @@
+<form *ngIf="isLogin&&loginForm" [formGroup]="loginForm">
+  <mat-form-field class="full-width">
+    <input matInput placeholder="Email cím" formControlName="email">
+    <mat-error *ngIf="loginForm.controls.email.hasError('wrongCredentials')"> </mat-error>
+  </mat-form-field>
+  <mat-form-field class="full-width">
+    <input type="password" matInput placeholder="Jelszó" formControlName="password" autocomplete="on">
+    <mat-error *ngIf="loginForm.controls.password.hasError('wrongCredentials')">
+      Rossz felhasználónév és jelszó!
+    </mat-error>
+  </mat-form-field>
+  <div class="buttons">
+    <button mat-stroked-button (click)="resetLoginForm()">Vissza</button>
+    <button mat-raised-button color="primary" (click)="login()" [disabled]="loginForm.invalid">Bejelentkezés</button>
+  </div>
+</form>
+
+<form *ngIf="!isLogin&&signInForm" [formGroup]="signInForm">
+  <mat-form-field class="full-width">
+    <input matInput placeholder="Email cím" formControlName="email">
+    <mat-error *ngIf="signInForm.controls.email.hasError('required')">
+      Email megadása kötelező
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field class="full-width">
+    <input matInput placeholder="Név" formControlName="name">
+    <mat-error *ngIf="signInForm.controls.name.hasError('required')">
+      Név megadása szükséges!
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field class="full-width">
+    <input type="password" autocomplete="new-password" matInput placeholder="Jelszó" formControlName="password"
+      minlength="6">
+    <mat-error *ngIf="signInForm.controls.password.hasError('required')">
+      Jelszó mező kitöltése közelező!
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field class="full-width">
+    <input type="password" autocomplete="new-password" matInput placeholder="Jelszó még egyszer"
+      formControlName="passwordAgain">
+    <mat-error *ngIf="signInForm.controls.passwordAgain.hasError('differentPasswords')">
+      A két jelszónak ugyan annak kell lennie!
+    </mat-error>
+  </mat-form-field>
+  <div class="buttons">
+    <button mat-stroked-button (click)="resetSignInForm()">Vissza</button>
+    <button mat-raised-button color="primary" (click)="signIn()" [disabled]="signInForm.invalid">Regisztrálás</button>
+  </div>
+</form>
+
+<a class="fab-bottom-right" mat-fab color="primary" (click)="changeFunction()">
+  <mat-icon>
+    <ng-container *ngIf="isLogin; else isSignIn">person_add</ng-container>
+    <ng-template #isSignIn>exit_to_app</ng-template>
+  </mat-icon>
+</a>

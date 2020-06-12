@@ -20,7 +20,6 @@ describe('DatePipe', () => {
     expect(
       pipe.areEqualDays(new Date(), pipe.getRealIsoDate(new Date(new Date().setDate(new Date().getDate() - 1))))
     ).toBeFalsy();
-    console.log(new Date(), new Date(new Date().setDate(new Date().getDate() - 2)));
     expect(
       pipe.areEqualDays(new Date(), pipe.getRealIsoDate(new Date(new Date().setDate(new Date().getDate() + 1))))
     ).toBeFalsy();

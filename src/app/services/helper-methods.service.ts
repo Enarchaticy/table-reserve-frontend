@@ -1,4 +1,4 @@
-import { LocalStorageService } from './local-storage.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { UserService } from './user.service';
 import { ReservationService } from './reservation.service';
 import { TableService } from './table.service';
@@ -14,7 +14,7 @@ export class HelperMethodsService {
     private tableService: TableService,
     private reservationService: ReservationService,
     private userService: UserService,
-    private localStorageService: LocalStorageService
+    private snackBar: MatSnackBar
   ) {}
 
   convertPlacesData(places: any) {
@@ -42,6 +42,12 @@ export class HelperMethodsService {
     return new Date(date.getTime() - tzoffset).toISOString().slice(0, -1);
   }
 
+  openSnackBar(message: string) {
+    this.snackBar.open(message, undefined, {
+      duration: 2000,
+    });
+  }
+
   async createMockData() {
     const userIds = this.createUsers();
     setTimeout(() => {
@@ -49,7 +55,7 @@ export class HelperMethodsService {
 
       let places;
       setTimeout(() => {
-        this.localStorageService.set('userId', userIds[1]);
+        localStorage.setItem('userId', userIds[1]);
         this.placeService.getPlaces().subscribe(async (res) => {
           places = res;
           this.createTables(places);

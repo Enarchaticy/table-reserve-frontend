@@ -1,6 +1,5 @@
-import { ReservationService } from './../../shared/services/reservation.service';
+import { ReservationService } from '../../services/reservation.service';
 import { Component, OnInit } from '@angular/core';
-import { LocalStorageService } from './../../shared/services/local-storage.service';
 
 @Component({
   selector: 'app-reservations',
@@ -9,11 +8,10 @@ import { LocalStorageService } from './../../shared/services/local-storage.servi
 })
 export class ReservationsComponent implements OnInit {
   reservations: any = [];
-  constructor(private localStorageService: LocalStorageService, private reservationService: ReservationService) {}
+  constructor(private reservationService: ReservationService) {}
 
   ngOnInit() {
-    const userId = this.localStorageService.get('userId');
-    this.reservationService.getReservationsByUser(userId).subscribe(
+    this.reservationService.getReservationsByUser().subscribe(
       (reservationRes) => {
         this.groupBy(reservationRes, (reservation) => reservation.date.substr(0, 10)).forEach((res) => {
           this.reservations.push({ date: res[0].date, reservation: this.convertReservationsData(res) });

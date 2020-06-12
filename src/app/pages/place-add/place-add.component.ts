@@ -1,8 +1,11 @@
-import { TableService } from './../../shared/services/table.service';
+import { Subscription } from 'rxjs';
+import { ApiResponse } from './../../models/api-response';
+import { Place } from './../../models/place';
+import { Table } from './../../models/table';
+import { TableService } from '../../services/table.service';
 import { Router } from '@angular/router';
-import { PlaceService } from './../../shared/services/place.service';
-import { LocalStorageService } from './../../shared/services/local-storage.service';
-import { Component, OnInit } from '@angular/core';
+import { PlaceService } from '../../services/place.service';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 
 interface DayForm {
@@ -16,16 +19,13 @@ interface DayForm {
   templateUrl: './place-add.component.html',
   styleUrls: ['./place-add.component.scss'],
 })
-export class PlaceAddComponent implements OnInit {
+export class PlaceAddComponent implements OnInit, OnDestroy {
   placeForm: FormGroup;
   days: DayForm[];
+  placeSubs: Subscription;
+  tableSubs: Subscription;
 
-  constructor(
-    private localStorageService: LocalStorageService,
-    private placeService: PlaceService,
-    private tableService: TableService,
-    private router: Router
-  ) {}
+  constructor(private placeService: PlaceService, private tableService: TableService, private router: Router) {}
 
   ngOnInit() {
     this.days = [
@@ -38,6 +38,15 @@ export class PlaceAddComponent implements OnInit {
       { name: 'vasárnap' },
     ];
     this.resetPlaceForm();
+  }
+
+  ngOnDestroy(): void {
+    if (this.placeSubs) {
+      this.placeSubs.unsubscribe();
+    }
+    if (this.tableSubs) {
+      this.tableSubs.unsubscribe();
+    }
   }
 
   resetPlaceForm() {
@@ -79,7 +88,6 @@ export class PlaceAddComponent implements OnInit {
 
   submitPlaceForm() {
     const place = {
-      ownerId: this.localStorageService.get('userId'),
       name: this.placeForm.value.name,
       description: this.placeForm.value.description,
       openingHours: [],
@@ -98,15 +106,15 @@ export class PlaceAddComponent implements OnInit {
       }
       this.createPlace(place, tables);
     } catch (e) {
-      console.log(e);
+      console.error(e);
       this.placeForm.controls.tables.setErrors({ notJson: true });
     }
   }
 
-  createPlace(place: any, tables: any[]) {
-    this.placeService.createPlace(place).subscribe((res: any) => {
+  createPlace(place: Place, tables: Table[]) {
+    this.placeSubs = this.placeService.createPlace(place).subscribe((res: ApiResponse) => {
       tables.map((table) => (table.placeId = res.id));
-      this.tableService.createTables(tables).subscribe(() => {
+      this.tableSubs = this.tableService.createTables(tables).subscribe(() => {
         this.router.navigateByUrl('myplaces');
       });
     });

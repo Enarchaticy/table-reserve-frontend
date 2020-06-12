@@ -1,6 +1,6 @@
-import { LocalStorageService } from './../../shared/services/local-storage.service';
-import { HelperMethodsService } from './../../shared/services/helper-methods.service';
-import { PlaceService } from './../../shared/services/place.service';
+import { Place } from './../../models/place';
+import { HelperMethodsService } from '../../services/helper-methods.service';
+import { PlaceService } from '../../services/place.service';
 import { Subscription } from 'rxjs';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
@@ -11,12 +11,11 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 })
 export class OwnedPlacesComponent implements OnInit, OnDestroy {
   placeSub: Subscription;
-  places: any;
+  places: Place[];
 
   constructor(
     private placeService: PlaceService,
     private helperMethodsService: HelperMethodsService,
-    private localStorageService: LocalStorageService
   ) {}
 
   ngOnInit() {
@@ -30,8 +29,8 @@ export class OwnedPlacesComponent implements OnInit, OnDestroy {
   }
 
   getPlaces() {
-    this.placeSub = this.placeService.getPlacesByOwner(this.localStorageService.get('userId')).subscribe(
-      (placesRes) => {
+    this.placeSub = this.placeService.getPlacesByOwner().subscribe(
+      (placesRes: Place[]) => {
         this.places = this.helperMethodsService.convertPlacesData(placesRes);
       },
       (err) => console.error(err)
