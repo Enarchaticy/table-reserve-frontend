@@ -1,3 +1,4 @@
+import { MatCardModule } from '@angular/material/card';
 import { SettingsComponent } from './settings.component';
 import { RouterModule, Routes } from '@angular/router';
 import { NgModule } from '@angular/core';
@@ -20,6 +21,7 @@ const routes: Routes = [
     MatInputModule,
     FormsModule,
     MatButtonModule,
+    MatCardModule,
     ReactiveFormsModule,
     RouterModule.forChild(routes),
   ],

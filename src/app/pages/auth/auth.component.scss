@@ -1,16 +1,17 @@
-form {
-    margin: 15px;
-    margin-bottom: 0px;
-}
-
-.full-width {
-    width: 100%;
-}
-
 .fab-bottom-right {
     position: fixed;
     right: 16px;
     bottom: 16px;
     z-index: 100;
-  }
-  
+}
+
+.card {
+    max-width: 900px;
+    margin: auto;
+    margin-top: 15px;
+    padding-bottom: 60px;
+
+    @media screen and (max-width: 960px) {
+        margin: 15px;
+    }
+}

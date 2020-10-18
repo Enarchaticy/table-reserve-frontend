@@ -1,22 +1,17 @@
 import { HelperMethodsService } from './../../services/helper-methods.service';
-import { ApiResponse } from './../../models/api-response';
+import { ApiResponse, LoginResponse } from './../../models/api-response';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
-import { FormGroup, FormControl, Validators, PatternValidator } from '@angular/forms';
-import { Component, OnInit } from '@angular/core';
-
-interface LoginResponse {
-  token: string;
-  user: { email: string; name: string };
-}
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.scss'],
 })
-export class AuthComponent implements OnInit {
+export class AuthComponent implements OnInit, OnDestroy {
   loginForm: FormGroup;
   signInForm: FormGroup;
   isLogin = true;
@@ -31,6 +26,12 @@ export class AuthComponent implements OnInit {
 
   ngOnInit() {
     this.resetLoginForm();
+  }
+
+  ngOnDestroy() {
+    if (this.userSubs) {
+      this.userSubs.unsubscribe();
+    }
   }
 
   changeFunction() {
@@ -58,12 +59,13 @@ export class AuthComponent implements OnInit {
     this.userSubs = this.userService.loginUser(this.loginForm.value).subscribe(
       (res: LoginResponse) => {
         localStorage.setItem('token', res.token);
+        localStorage.setItem('userId', res.user.id);
         localStorage.setItem('name', res.user.name);
         localStorage.setItem('email', res.user.email);
         this.router.navigateByUrl('home');
       },
       (err) => {
-        this.helperMethodsService.openSnackBar('Rossz felhasználónév és jelszó!');
+        this.helperMethodsService.openSnackBar('Rossz email cím és jelszó!');
       }
     );
   }

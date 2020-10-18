@@ -1,0 +1,17 @@
+<div class="container">
+  <form [formGroup]="passwordForm">
+    <p>Törléshez adja meg a jelszavát!</p>
+    <mat-form-field class="full-width">
+      <input matInput placeholder="Jelszó" formControlName="password" minlength=6 type="password"
+        autocomplete="new-password">
+      <mat-error *ngIf="passwordForm.controls.password.hasError('required')">
+        Jelszó megadása kötelező!
+      </mat-error>
+    </mat-form-field>
+    <div class="buttons">
+      <button mat-stroked-button (click)="dialogService.closeDialog()">Mégsem</button>
+      <button mat-raised-button class="danger-button" (click)="deleteProfile()"
+        [disabled]="passwordForm.invalid">Törlés</button>
+    </div>
+  </form>
+</div>

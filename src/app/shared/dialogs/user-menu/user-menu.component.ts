@@ -17,6 +17,7 @@ export class UserMenuComponent {
 
   logout() {
     localStorage.clear();
+    this.dialogService.closeDialog();
     this.router.navigateByUrl('authentication');
   }
 }

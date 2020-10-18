@@ -1,3 +1,5 @@
+import { HelperMethodsService } from './../../services/helper-methods.service';
+import { TIME_PATTERN } from './../../shared/patterns/time-pattern';
 import { Subscription } from 'rxjs';
 import { ApiResponse } from './../../models/api-response';
 import { Place } from './../../models/place';
@@ -25,7 +27,12 @@ export class PlaceAddComponent implements OnInit, OnDestroy {
   placeSubs: Subscription;
   tableSubs: Subscription;
 
-  constructor(private placeService: PlaceService, private tableService: TableService, private router: Router) {}
+  constructor(
+    private placeService: PlaceService,
+    private tableService: TableService,
+    private router: Router,
+    private helperMethodsService: HelperMethodsService
+  ) {}
 
   ngOnInit() {
     this.days = [
@@ -78,11 +85,10 @@ export class PlaceAddComponent implements OnInit, OnDestroy {
   }
 
   resetDayForm(day: DayForm) {
-    const pattern = '(^[0-9]:[0-5][0-9]$)|(^[0-1][0-9]:[0-5][0-9]$)|(^2[0-3]:[0-5][0-9]$)';
     day.formGroup = new FormGroup({
       day: new FormControl(day.name),
-      from: new FormControl({ value: '', disabled: !day.enabled }, Validators.pattern(pattern)),
-      to: new FormControl({ value: '', disabled: !day.enabled }, Validators.pattern(pattern)),
+      from: new FormControl({ value: '', disabled: !day.enabled }, Validators.pattern(TIME_PATTERN)),
+      to: new FormControl({ value: '', disabled: !day.enabled }, Validators.pattern(TIME_PATTERN)),
     });
   }
 
@@ -107,7 +113,7 @@ export class PlaceAddComponent implements OnInit, OnDestroy {
       this.createPlace(place, tables);
     } catch (e) {
       console.error(e);
-      this.placeForm.controls.tables.setErrors({ notJson: true });
+      this.helperMethodsService.openSnackBar('Az asztalok nem jó formátumban vannak!');
     }
   }
 

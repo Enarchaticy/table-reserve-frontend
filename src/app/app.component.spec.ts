@@ -1,5 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
-import { TestBed, async } from '@angular/core/testing';
+import { TestBed, async, ComponentFixture } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -8,6 +8,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { OVERLAY_PROVIDERS } from '@angular/cdk/overlay';
 
 describe('AppComponent', () => {
+  let fixture: ComponentFixture<AppComponent>;
+  let app;
+  let component: AppComponent;
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, MatToolbarModule, MatButtonModule, MatIconModule, HttpClientModule],
@@ -16,15 +20,26 @@ describe('AppComponent', () => {
     }).compileComponents();
   }));
 
+  beforeEach(() => {
+    fixture = TestBed.createComponent(AppComponent);
+    app = fixture.debugElement.componentInstance;
+    component = fixture.componentInstance;
+  });
+
   it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
     expect(app).toBeTruthy();
+    expect(component).toBeTruthy();
   });
 
   it(`should have as title 'table-reserve'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
     expect(app.title).toEqual('table-reserve');
+  });
+
+  it(`should setCircleInitial return the user name first letter in upper case`, () => {
+    localStorage.setItem('name', 'asdasd');
+    expect(component.setCircleInitial()).toEqual('A');
+
+    localStorage.setItem('name', 'qweqwe');
+    expect(component.setCircleInitial()).toEqual('Q');
   });
 });

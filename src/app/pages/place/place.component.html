@@ -1,19 +1,21 @@
 <div class="align-to-center" *ngIf="place">
   <h2>{{place.name}}</h2>
-  <h3 *ngFor="let openingHour of place.openingHours of ">{{openingHour.day}} : {{openingHour.from}} - {{openingHour.to}}
+  <h3 *ngFor="let openingHour of place.openingHours of ">{{openingHour.day}} : {{openingHour.from}} -
+    {{openingHour.to}}
   </h3>
   <h4>{{place.description}}</h4>
 </div>
+
 <mat-form-field>
-  <input matInput [matDatepicker]="picker" [formControl]="date" (dateChange)="getReservations(placeId)">
+  <input matInput [matDatepicker]="picker" [formControl]="date" (dateChange)="getReservations()">
   <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
   <mat-datepicker #picker></mat-datepicker>
 </mat-form-field>
-
-<svg [attr.height]="height" [attr.width]="width">
-  <g *ngFor="let table of circles" (click)="selectedTable = table.id">
+<svg #svgCanvas [attr.height]="height" [attr.width]="width">
+  <g *ngFor="let table of circles" (click)="reservationDialog(table.id, table.reservation)">
     <circle
-      [ngClass]="{'selected-table': selectedTable == table.id, 'free-table': !table.reservation, 'reserved-table': table.reservation}"
+      [ngClass]="{'selected-table': selectedTable == table.id, 'free-table': !table.reservation,
+       'reserved-table': table.reservation, 'my-table': table.reservation && table.reservation.userId === userId || !userId}"
       [attr.cx]="table.x" [attr.cy]="table.y" [attr.r]="table.radius" />
     <text [attr.x]="table.x" [attr.y]="table.y" font-size="14">
       <ng-container *ngIf="table.reservation; else reservedText">
@@ -23,10 +25,10 @@
       <ng-template #reservedText>{{table.seats}} hely</ng-template>
     </text>
   </g>
-  <g *ngFor="let table of rects" (click)="selectedTable = table.id">
-    <rect
-      [ngClass]="{'selected-table': selectedTable == table.id, 'free-table': !table.reservation, 'reserved-table': table.reservation}"
-      [attr.x]="table.x" [attr.y]="table.y" [attr.width]="table.width" [attr.height]="table.height" />
+  <g *ngFor="let table of rects" (click)="reservationDialog(table.id, table.reservation)">
+    <rect [ngClass]="{'selected-table': selectedTable == table.id, 'free-table': !table.reservation, 'reserved-table': table.reservation, 
+      'my-table': table.reservation && table.reservation.userId === userId || !userId}" [attr.x]="table.x"
+      [attr.y]="table.y" [attr.width]="table.width" [attr.height]="table.height" />
     <text [attr.x]="table.x + table.width/2" [attr.y]="table.y + table.height/2" [attr.font-size]="fontSize">
       <ng-container *ngIf="table.reservation; else reservedText">
         <tspan [attr.x]="table.x + table.width/2" dy="-0.6em">{{table.reservation.userName}}</tspan>

@@ -1,7 +1,13 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+    height: 100%;
+}
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 
 .align-to-center {
     overflow: hidden;
@@ -14,8 +20,18 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
     button {
         margin: 5px;
-        margin-bottom: 15px; 
+        margin-bottom: 15px;
         font-size: 15px;
         line-height: 40px;
     }
 }
+
+.full-width {
+    width: 100%;
+}
+
+.danger-button {
+    background-color: #ec7888;
+    color: white;
+}
+

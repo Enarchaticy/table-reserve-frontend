@@ -1,3 +1,7 @@
+import { CONTAINER_DATA } from '../../shared/dialogs/data-injector';
+import { CreateReservationComponent } from './../../shared/dialogs/create-reservation/create-reservation.component';
+import { ComponentPortal, PortalInjector } from '@angular/cdk/portal';
+import { DialogService } from './../../shared/dialogs/dialog.service';
 import { Place } from './../../models/place';
 import { Reservation } from './../../models/reservation';
 import { Table } from './../../models/table';
@@ -6,7 +10,7 @@ import { Subscription } from 'rxjs';
 import { ReservationService } from '../../services/reservation.service';
 import { TableService } from '../../services/table.service';
 import { PlaceService } from '../../services/place.service';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Injector } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
 @Component({
@@ -15,8 +19,11 @@ import { FormControl } from '@angular/forms';
   styleUrls: ['./place.component.scss'],
 })
 export class PlaceComponent implements OnInit, OnDestroy {
+  @ViewChild('svgCanvas', { static: false }) svgCanvas: ElementRef;
+
   date: FormControl;
   placeId: string;
+  userId: string;
 
   width: number;
   height: number;
@@ -31,23 +38,25 @@ export class PlaceComponent implements OnInit, OnDestroy {
   tableSubs: Subscription;
   reservationSubs: Subscription;
   placeSubs: Subscription;
+  dialogSubs: Subscription;
 
   selectedTable: string;
   constructor(
     private reservationService: ReservationService,
     private placeService: PlaceService,
     private tableService: TableService,
-    private helperMethodsService: HelperMethodsService
+    private helperMethodsService: HelperMethodsService,
+    private dialogService: DialogService,
+    private injector: Injector
   ) {}
 
   ngOnInit() {
     this.getStorageData();
+    this.getPlace();
+    this.getTables();
+    this.getReservations();
 
-    if (this.placeId) {
-      this.getPlace(this.placeId);
-      this.getTables(this.placeId);
-      this.getReservations(this.placeId);
-    }
+    this.handleClosedDialog();
     this.width = 550;
     this.height = 550;
     this.fontSize = 14;
@@ -63,10 +72,13 @@ export class PlaceComponent implements OnInit, OnDestroy {
     if (this.placeSubs) {
       this.placeSubs.unsubscribe();
     }
+    if (this.dialogSubs) {
+      this.dialogSubs.unsubscribe();
+    }
   }
 
-  getPlace(placeId: string) {
-    this.placeSubs = this.placeService.getPlace(placeId).subscribe(
+  getPlace() {
+    this.placeSubs = this.placeService.getPlace(this.placeId).subscribe(
       (placeRes: Place) => {
         this.place = placeRes;
       },
@@ -74,33 +86,34 @@ export class PlaceComponent implements OnInit, OnDestroy {
     );
   }
 
-  getTables(placeId: string) {
-    this.tableSubs = this.tableService.getTablesByPlace(placeId).subscribe(
+  getTables() {
+    this.tableSubs = this.tableService.getTablesByPlace(this.placeId).subscribe(
       (tableRes: Table[]) => (this.tables = tableRes),
       (err) => console.error(err),
       () => this.createFloorMap()
     );
   }
 
-  getReservations(placeId: string) {
-    console.log(this.date.value);
-    console.log(this.helperMethodsService.getRealIsoDate(this.date.value));
-    this.reservationSubs = this.reservationService
-      .getReservationsByDateAndPlace(this.helperMethodsService.getRealIsoDate(this.date.value), placeId)
-      .subscribe(
-        (reservationRes: Reservation[]) => (this.reservations = reservationRes),
-        (err) => console.error(err),
-        () => {
-          if (this.rects.length > 0 || this.circles.length > 0) {
-            this.addReservationsToFloorMap();
+  getReservations() {
+    if (Object.prototype.toString.call(this.date.value) === '[object Date]' && !isNaN(this.date.value.getTime())) {
+      this.reservationSubs = this.reservationService
+        .getReservationsByDateAndPlace(this.helperMethodsService.getRealIsoDate(this.date.value), this.placeId)
+        .subscribe(
+          (reservationRes: Reservation[]) => (this.reservations = reservationRes),
+          (err) => console.error(err),
+          () => {
+            if (this.rects.length > 0 || this.circles.length > 0) {
+              this.addReservationsToFloorMap();
+            }
           }
-        }
-      );
+        );
+    }
   }
 
   getStorageData() {
     this.placeId = localStorage.getItem('placeId');
     const date = localStorage.getItem('date');
+    this.userId = localStorage.getItem('userId');
     if (date !== 'undefined') {
       this.date = new FormControl(new Date(new Date(date).setHours(0, 0, 0, 0)));
     } else {
@@ -145,6 +158,34 @@ export class PlaceComponent implements OnInit, OnDestroy {
     });
     this.circles.map((circle) => {
       circle.reservation = this.reservations.find((reservation) => reservation.tableId === circle.id);
+    });
+  }
+
+  reservationDialog(tableId: string, reservation: Reservation) {
+    this.selectedTable = tableId;
+    const containerPortal = new ComponentPortal(
+      CreateReservationComponent,
+      null,
+      this.createInjector({
+        tableId,
+        reservation,
+        place: this.place,
+        date: this.date.value,
+      })
+    );
+    this.dialogService.openReservationDialog<CreateReservationComponent>(containerPortal, this.svgCanvas);
+  }
+
+  createInjector(dataToPass): PortalInjector {
+    const injectorTokens = new WeakMap<any, any>([[CONTAINER_DATA, dataToPass]]);
+    return new PortalInjector(this.injector, injectorTokens);
+  }
+
+  handleClosedDialog() {
+    this.dialogSubs = this.dialogService.reservationChange.subscribe((value) => {
+      if (value) {
+        this.getReservations();
+      }
     });
   }
 }

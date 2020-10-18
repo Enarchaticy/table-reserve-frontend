@@ -1,3 +1,4 @@
+import { NoDataAlertModule } from './../../shared/no-data-alert/no-data-alert.module';
 import { HomeComponent } from './home.component';
 import { RouterModule, Routes } from '@angular/router';
 import { NgModule } from '@angular/core';
@@ -24,6 +25,7 @@ const routes: Routes = [
     MatIconModule,
     FormsModule,
     MatButtonModule,
+    NoDataAlertModule,
     RouterModule.forChild(routes),
   ],
 })

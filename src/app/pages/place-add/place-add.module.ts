@@ -1,3 +1,5 @@
+import { MatCardModule } from '@angular/material/card';
+import { TimeInputModule } from './../../shared/time-input/time-input.module';
 import { PlaceAddComponent } from './place-add.component';
 import { RouterModule, Routes } from '@angular/router';
 import { NgModule } from '@angular/core';
@@ -24,10 +26,12 @@ const routes: Routes = [
     PlaceDetailsCardModule,
     MatButtonModule,
     MatIconModule,
+    MatCardModule,
     FormsModule,
     MatInputModule,
     ReactiveFormsModule,
     MatSlideToggleModule,
+    TimeInputModule,
     RouterModule.forChild(routes),
   ],
 })

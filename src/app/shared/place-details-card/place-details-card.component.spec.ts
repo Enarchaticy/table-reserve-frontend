@@ -26,4 +26,13 @@ describe('PlaceDetailsCardComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should navigateToThePlace set localStorage date correctly', () => {
+    component.navigateToThePlace();
+    expect(localStorage.getItem('placeId')).toBe('asd');
+    expect(localStorage.getItem('date')).toBe('undefined');
+    component.date = '2020.06.18T15:11:00.000';
+    component.navigateToThePlace();
+    expect(localStorage.getItem('date')).toBe('2020.06.18T15:11:00.000');
+  });
 });

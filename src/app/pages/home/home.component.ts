@@ -41,8 +41,4 @@ export class HomeComponent implements OnInit, OnDestroy {
   onNameChange() {
     this.placesToShow = this.places.filter((place) => place.name.toLowerCase().search(this.name.toLowerCase()) !== -1);
   }
-
-  createMockData() {
-    this.helperMethodsService.createMockData();
-  }
 }

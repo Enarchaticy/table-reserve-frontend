@@ -1,4 +1,6 @@
 <app-place-details-card *ngFor="let place of places" [place]="place"></app-place-details-card>
+<app-no-data-alert *ngIf="!places||places.length===0" text="Nincs megjeleníthető szórakozóhely!">
+</app-no-data-alert>
 <a class="fab-bottom-right" mat-fab color="primary" routerLink="/placeadd">
   <mat-icon>add</mat-icon>
 </a>

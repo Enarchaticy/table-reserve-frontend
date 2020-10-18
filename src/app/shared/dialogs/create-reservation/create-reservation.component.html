@@ -1,0 +1,26 @@
+<div class="container">
+  <form *ngIf="reservationForm" [formGroup]="reservationForm">
+    <mat-form-field class="full-width">
+      <input matInput placeholder="Név" formControlName="name">
+    </mat-form-field>
+    <mat-form-field class="full-width">
+      <input appTimeInput matInput placeholder="Idő" formControlName="time">
+      <mat-error *ngIf="reservationForm.controls.time.hasError('required')">
+        Kérem adjon meg időpontot
+      </mat-error>
+      <mat-error *ngIf="reservationForm.controls.time.hasError('pattern')">
+        Helyes időpont formája: 14:40
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field class="full-width">
+      <textarea matInput placeholder="Megjegyzés" formControlName="note"></textarea>
+    </mat-form-field>
+    <div class="buttons">
+      <button mat-stroked-button (click)="closeDialog()">Vissza</button>
+      <button *ngIf="!checkIfDeletable()" mat-raised-button color="primary" (click)="submitReservationForm()"
+        [disabled]="reservationForm.invalid || isReservingForbidden">Foglalás</button>
+      <button *ngIf="checkIfDeletable()" mat-raised-button class="danger-button"
+        (click)="deleteReservation()">Törlés</button>
+    </div>
+  </form>
+</div>

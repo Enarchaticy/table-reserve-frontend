@@ -1,6 +1,14 @@
+import { MatCardModule } from '@angular/material/card';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { RouterTestingModule } from '@angular/router/testing';
+import { HttpClientModule } from '@angular/common/http';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PlaceAddComponent } from './place-add.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 describe('PlaceAddComponent', () => {
   let component: PlaceAddComponent;
@@ -8,9 +16,30 @@ describe('PlaceAddComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PlaceAddComponent ]
-    })
-    .compileComponents();
+      imports: [
+        BrowserAnimationsModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatInputModule,
+        MatSnackBarModule,
+        MatSlideToggleModule,
+        MatCardModule,
+        HttpClientModule,
+        RouterTestingModule,
+      ],
+      providers: [
+        BrowserAnimationsModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatInputModule,
+        MatSnackBarModule,
+        MatSlideToggleModule,
+        MatCardModule,
+        HttpClientModule,
+        RouterTestingModule,
+      ],
+      declarations: [PlaceAddComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

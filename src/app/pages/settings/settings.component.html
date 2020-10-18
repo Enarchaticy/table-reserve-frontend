@@ -1,16 +1,61 @@
- <form *ngIf="nameForm" [formGroup]="nameForm">
-   <mat-form-field class="full-width">
-     <input matInput placeholder="Új név" formControlName="name" appForbiddenName="user.name">
-     <mat-error *ngIf="nameForm.controls.name.hasError('required')">
-       A név mező nem lehet üres!
-     </mat-error>
-     <mat-error *ngIf="nameForm.controls.name.hasError('appForbiddenName')">
-       A név mező nem lehet üres!
-     </mat-error>
-   </mat-form-field>
+ <mat-card class="card">
+   <mat-card-subtitle>
+     Név változtatás
+   </mat-card-subtitle>
+   <form *ngIf="nameForm" [formGroup]="nameForm">
+     <mat-form-field class="full-width">
+       <input matInput placeholder="Új név" formControlName="name" appForbiddenName="user.name">
+       <mat-error *ngIf="nameForm.controls.name.hasError('required')">
+         A név mező nem lehet üres!
+       </mat-error>
+       <mat-error *ngIf="nameForm.controls.name.hasError('appForbiddenName')">
+         A név mező nem lehet üres!
+       </mat-error>
+     </mat-form-field>
+     <div class="buttons">
+       <button mat-stroked-button (click)="resetNameForm()">Mégsem</button>
+       <button mat-raised-button color="primary" (click)="submitName()"
+         [disabled]="nameForm.invalid || nameForm.value.name===user.name">Beállítás</button>
+     </div>
+   </form>
+ </mat-card>
+
+ <mat-card class="card">
+   <mat-card-subtitle>
+     Jelszó változtatás
+   </mat-card-subtitle>
+   <form *ngIf="passwordChangeForm" [formGroup]="passwordChangeForm">
+     <mat-form-field class="full-width">
+       <input matInput type="password" placeholder="Régi Jelszó" autocomplete="new-password"
+         formControlName="oldPassword">
+       <mat-error *ngIf="passwordChangeForm.controls.oldPassword.hasError('required')">
+         A régi jelszó megadása kötelező!
+       </mat-error>
+     </mat-form-field>
+     <mat-form-field class="full-width">
+       <input type="password" autocomplete="new-password" matInput placeholder="Új Jelszó" formControlName="newPassword"
+         minlength="6">
+       <mat-error *ngIf="passwordChangeForm.controls.newPassword.hasError('required')">
+         Az új jelszó mező kitöltése közelező!
+       </mat-error>
+     </mat-form-field>
+     <mat-form-field class="full-width">
+       <input type="password" autocomplete="new-password" matInput placeholder="Új Jelszó Újra"
+         formControlName="newPasswordAgain">
+     </mat-form-field>
+     <div class="buttons">
+       <button mat-stroked-button (click)="resetPasswordChangeForm()">Mégsem</button>
+       <button mat-raised-button color="primary" (click)="checkNewPasswords()"
+         [disabled]="passwordChangeForm.invalid">Beállítás</button>
+     </div>
+   </form>
+ </mat-card>
+
+ <mat-card class="card">
+   <mat-card-subtitle>
+     Fiók törlése
+   </mat-card-subtitle>
    <div class="buttons">
-     <button mat-stroked-button (click)="resetNameForm()">Mégsem</button>
-     <button mat-raised-button color="primary" (click)="submitName()"
-       [disabled]="nameForm.invalid || nameForm.value.name===user.name">Beállítás</button>
+     <button mat-raised-button class="danger-button" (click)="deleteProfileDialog()">Fiók törlése</button>
    </div>
- </form>
+ </mat-card>

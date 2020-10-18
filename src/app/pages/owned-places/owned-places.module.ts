@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { PlaceDetailsCardModule } from '../../shared/place-details-card/place-details-card.module';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { NoDataAlertModule } from './../../shared/no-data-alert/no-data-alert.module';
 
 const routes: Routes = [
   {
@@ -15,6 +16,13 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [OwnedPlacesComponent],
-  imports: [CommonModule, PlaceDetailsCardModule, MatButtonModule, MatIconModule, RouterModule.forChild(routes)],
+  imports: [
+    CommonModule,
+    PlaceDetailsCardModule,
+    MatButtonModule,
+    MatIconModule,
+    NoDataAlertModule,
+    RouterModule.forChild(routes),
+  ],
 })
 export class OwnedPlacesModule {}

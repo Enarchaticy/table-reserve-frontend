@@ -11,3 +11,18 @@ export interface OpeningHour {
   from?: string;
   to?: string;
 }
+
+export const MOCK_PLACE: Place = {
+  id: 'asd',
+  name: 'asd',
+  openingHours: [
+    {
+      day: 'szerda',
+      from: '10:10',
+      to: '20:30',
+    },
+  ],
+  ownerId: 'asd',
+  description: 'asd',
+};
+

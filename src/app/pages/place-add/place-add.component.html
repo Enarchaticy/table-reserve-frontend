@@ -1,49 +1,48 @@
-<form [formGroup]="placeForm">
-  <mat-form-field class="full-width">
-    <input matInput placeholder="Név" formControlName="name">
-    <mat-error *ngIf="placeForm.controls.name.hasError('required')">
-      A név mező kitöltése <strong>kötelező</strong>!
-    </mat-error>
-  </mat-form-field>
+<mat-card class="card">
+  <form [formGroup]="placeForm">
+    <mat-form-field class="full-width">
+      <input matInput placeholder="Név" formControlName="name">
+      <mat-error *ngIf="placeForm.controls.name.hasError('required')">
+        A név mező kitöltése <strong>kötelező</strong>!
+      </mat-error>
+    </mat-form-field>
 
-  <mat-form-field class="full-width">
-    <mat-label>Leírás</mat-label>
-    <textarea matInput formControlName="description"></textarea>
-  </mat-form-field>
+    <mat-form-field class="full-width">
+      <mat-label>Leírás</mat-label>
+      <textarea matInput formControlName="description"></textarea>
+    </mat-form-field>
 
-  <form *ngFor="let day of days" [formGroup]="day.formGroup">
-    <div class="day-name">
-      <span>{{day.name}}</span>
-      <mat-slide-toggle [checked]="day.enabled" (change)="day.enabled = !day.enabled;resetDayForm(day)">
-      </mat-slide-toggle>
+    <form *ngFor="let day of days" [formGroup]="day.formGroup">
+      <div class="day-name">
+        <span>{{day.name}}</span>
+        <mat-slide-toggle [checked]="day.enabled" (change)="day.enabled = !day.enabled;resetDayForm(day)">
+        </mat-slide-toggle>
+      </div>
+
+      <mat-form-field class="half-width">
+        <input appTimeInput matInput placeholder="től" formControlName="from" minlength="4" maxlength="5">
+        <mat-error *ngIf="day.formGroup.controls.from.hasError('pattern')">
+          Kitöltés 14:30 alakban
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="half-width">
+        <input appTimeInput matInput placeholder="ig" formControlName="to" minlength="4" maxlength="5">
+        <mat-error *ngIf="day.formGroup.controls.to.hasError('pattern')">
+          Kitöltés 21:30 alakban
+        </mat-error>
+      </mat-form-field>
+    </form>
+
+    <mat-form-field class="full-width">
+      <mat-label>Asztalok</mat-label>
+      <textarea matInput formControlName="tables" rows="18"></textarea>
+    </mat-form-field>
+
+    <div class="buttons">
+      <button mat-stroked-button (click)="resetPlaceForm()">Mégsem</button>
+      <button mat-raised-button color="primary" (click)="submitPlaceForm()"
+        [disabled]="placeForm.invalid">Létrehozás</button>
     </div>
-
-    <mat-form-field class="half-width">
-      <input matInput placeholder="től" formControlName="from" minlength="4" maxlength="5">
-      <mat-error *ngIf="day.formGroup.controls.from.hasError('pattern')">
-        Kitöltés 14:30 alakban
-      </mat-error>
-    </mat-form-field>
-
-    <mat-form-field class="half-width">
-      <input matInput placeholder="ig" formControlName="to" minlength="4" maxlength="5">
-      <mat-error *ngIf="day.formGroup.controls.to.hasError('pattern')">
-        Kitöltés 21:30 alakban
-      </mat-error>
-    </mat-form-field>
   </form>
-
-  <mat-form-field class="full-width">
-    <mat-label>Asztalok</mat-label>
-    <textarea matInput formControlName="tables" rows="18"></textarea>
-    <mat-error *ngIf="placeForm.controls.tables.hasError('notJson')">
-      Hibás formátum!
-    </mat-error>
-  </mat-form-field>
-
-  <div class="buttons">
-    <button mat-stroked-button (click)="resetPlaceForm()">Mégsem</button>
-    <button mat-raised-button color="primary" (click)="submitPlaceForm()"
-      [disabled]="placeForm.invalid">Létrehozás</button>
-  </div>
-</form>
+</mat-card>

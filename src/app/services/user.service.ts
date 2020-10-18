@@ -19,8 +19,9 @@ export class UserService {
     return this.http.put('user/update', user);
   }
 
-  deleteUser() {
-    return this.http.delete('user/delete');
+  deleteUser(password: string) {
+    const params = new HttpParams().append('password', password);
+    return this.http.delete('user/delete', { params });
   }
 
   getUser(id: string) {

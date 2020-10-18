@@ -1,0 +1,22 @@
+@mixin absolute-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.no-data-alert {
+    @include absolute-center;
+    width: 300px;
+    height: 80px;
+    border: 2px solid red;
+    background-color: #f8d3d8;
+    color: red;
+}
+
+.center {
+    width: 271px;
+    font-size: 16px;
+    @include absolute-center;
+}
