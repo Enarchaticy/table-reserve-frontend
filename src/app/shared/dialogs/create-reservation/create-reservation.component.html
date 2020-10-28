@@ -16,7 +16,7 @@
       <textarea matInput placeholder="Megjegyzés" formControlName="note"></textarea>
     </mat-form-field>
     <div class="buttons">
-      <button mat-stroked-button (click)="closeDialog()">Vissza</button>
+      <button mat-stroked-button (click)="closeDialog(false)">Vissza</button>
       <button *ngIf="!checkIfDeletable()" mat-raised-button color="primary" (click)="submitReservationForm()"
         [disabled]="reservationForm.invalid || isReservingForbidden">Foglalás</button>
       <button *ngIf="checkIfDeletable()" mat-raised-button class="danger-button"
