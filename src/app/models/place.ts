@@ -12,6 +12,12 @@ export interface OpeningHour {
   to?: string;
 }
 
+export interface DisplayToday {
+  openingHours: string;
+  dayInWeek: number;
+  isClosed: boolean;
+}
+
 export const MOCK_PLACE: Place = {
   id: 'asd',
   name: 'asd',
@@ -25,4 +31,3 @@ export const MOCK_PLACE: Place = {
   ownerId: 'asd',
   description: 'asd',
 };
-

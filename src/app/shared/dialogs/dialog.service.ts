@@ -26,18 +26,12 @@ export class DialogService {
     this.overlayRef.backdropClick().subscribe(() => this.closeDialog());
   }
 
-  public openReservationDialog<T>(componentPortal: ComponentPortal<T>, svgCanvasRef: ElementRef): void {
+  public openReservationDialog<T>(componentPortal: ComponentPortal<T>): void {
     this.overlayRef = this.overlay.create({
       width: 279,
       height: 192,
       hasBackdrop: true,
-      positionStrategy: this.overlay
-        .position()
-        .connectedTo(
-          svgCanvasRef,
-          { originX: 'center', originY: 'center' },
-          { overlayX: 'center', overlayY: 'center' }
-        ),
+      positionStrategy: this.overlay.position().global().centerHorizontally().centerVertically(),
       scrollStrategy: this.overlay.scrollStrategies.block(),
     });
     this.overlayRef.attach(componentPortal);

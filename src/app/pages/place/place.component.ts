@@ -2,7 +2,7 @@ import { CONTAINER_DATA } from '../../shared/dialogs/data-injector';
 import { CreateReservationComponent } from './../../shared/dialogs/create-reservation/create-reservation.component';
 import { ComponentPortal, PortalInjector } from '@angular/cdk/portal';
 import { DialogService } from './../../shared/dialogs/dialog.service';
-import { Place } from './../../models/place';
+import { DisplayToday, Place } from './../../models/place';
 import { Reservation } from './../../models/reservation';
 import { Table } from './../../models/table';
 import { HelperMethodsService } from '../../services/helper-methods.service';
@@ -10,8 +10,9 @@ import { Subscription } from 'rxjs';
 import { ReservationService } from '../../services/reservation.service';
 import { TableService } from '../../services/table.service';
 import { PlaceService } from '../../services/place.service';
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Injector } from '@angular/core';
+import { Component, OnInit, OnDestroy, Injector } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { BreakpointObserver } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-place',
@@ -19,15 +20,9 @@ import { FormControl } from '@angular/forms';
   styleUrls: ['./place.component.scss'],
 })
 export class PlaceComponent implements OnInit, OnDestroy {
-  @ViewChild('svgCanvas', { static: false }) svgCanvas: ElementRef;
-
   date: FormControl;
   placeId: string;
   userId: string;
-
-  width: number;
-  height: number;
-  fontSize: number;
 
   circles: Table[] = [];
   rects: Table[] = [];
@@ -40,14 +35,17 @@ export class PlaceComponent implements OnInit, OnDestroy {
   placeSubs: Subscription;
   dialogSubs: Subscription;
 
-  selectedTable: string;
+  today: DisplayToday;
+  mapSize = { width: 0, height: 0, isScreenSmaller: {} };
+  openingHoursToShow = [];
   constructor(
     private reservationService: ReservationService,
     private placeService: PlaceService,
     private tableService: TableService,
     private helperMethodsService: HelperMethodsService,
     private dialogService: DialogService,
-    private injector: Injector
+    private injector: Injector,
+    private breakpointObserver: BreakpointObserver
   ) {}
 
   ngOnInit() {
@@ -57,9 +55,6 @@ export class PlaceComponent implements OnInit, OnDestroy {
     this.getReservations();
 
     this.handleClosedDialog();
-    this.width = 550;
-    this.height = 550;
-    this.fontSize = 14;
   }
 
   ngOnDestroy() {
@@ -81,6 +76,21 @@ export class PlaceComponent implements OnInit, OnDestroy {
     this.placeSubs = this.placeService.getPlace(this.placeId).subscribe(
       (placeRes: Place) => {
         this.place = placeRes;
+        this.today = {
+          openingHours: this.helperMethodsService.getTodayOpeningHours(this.place.openingHours, new Date()),
+          dayInWeek: (new Date().getDay() - 1) % 7,
+          isClosed: true,
+        };
+        this.openingHoursToShow = ['hétfő', 'kedd', 'szerda', 'csütörtök', 'péntek', 'szombat', 'vasárnap'].map(
+          (day) => {
+            const openedDay = this.place.openingHours.find((openingHour) => openingHour.day === day);
+            if (openedDay) {
+              return openedDay;
+            } else {
+              return { day, from: null, to: null };
+            }
+          }
+        );
       },
       (err) => console.error(err)
     );
@@ -122,6 +132,23 @@ export class PlaceComponent implements OnInit, OnDestroy {
   }
 
   createFloorMap() {
+    this.mapSize = {
+      width:
+        Math.max.apply(
+          Math,
+          this.tables.map((table) => table.x)
+        ) + 100,
+      height:
+        Math.max.apply(
+          Math,
+          this.tables.map((table) => table.y)
+        ) + 100,
+      isScreenSmaller: '',
+    };
+    this.mapSize.isScreenSmaller = this.breakpointObserver.isMatched('(max-width: ' + (this.mapSize.width + 30) + 'px)')
+      ? null
+      : { display: 'table', 'margin-right': 'auto', 'margin-left': 'auto' };
+
     this.tables.map((table) => {
       switch (table.shape) {
         case 'rectangle':
@@ -162,7 +189,6 @@ export class PlaceComponent implements OnInit, OnDestroy {
   }
 
   reservationDialog(tableId: string, reservation: Reservation) {
-    this.selectedTable = tableId;
     const containerPortal = new ComponentPortal(
       CreateReservationComponent,
       null,
@@ -173,7 +199,7 @@ export class PlaceComponent implements OnInit, OnDestroy {
         date: this.date.value,
       })
     );
-    this.dialogService.openReservationDialog<CreateReservationComponent>(containerPortal, this.svgCanvas);
+    this.dialogService.openReservationDialog<CreateReservationComponent>(containerPortal);
   }
 
   createInjector(dataToPass): PortalInjector {

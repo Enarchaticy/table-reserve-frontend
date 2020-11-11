@@ -1,40 +1,62 @@
-<div class="align-to-center" *ngIf="place">
-  <h2>{{place.name}}</h2>
-  <h3 *ngFor="let openingHour of place.openingHours of ">{{openingHour.day}} : {{openingHour.from}} -
-    {{openingHour.to}}
-  </h3>
-  <h4>{{place.description}}</h4>
+<mat-card class="card" *ngIf="place">
+  <h2 class="align-to-center">{{place.name}}</h2>
+  <span>Nyitvatartás:</span><br />
+  <span *ngIf="today&&today.isClosed; else moreDate">Ma: {{today.openingHours}}<br />
+    <span class="link-like-text" (click)="today.isClosed = !today.isClosed">Több megjelenítése...</span>
+  </span>
+  <ng-template #moreDate><span *ngFor="let openingHour of openingHoursToShow; let i=index"
+      [ngClass]="{'today': today&&i===today.dayInWeek}">{{openingHour.day}} :
+      <ng-container *ngIf="openingHour.from; else closed">
+        {{openingHour.from}} -
+        {{openingHour.to}}
+      </ng-container>
+      <ng-template #closed>
+        ZÁRVA
+      </ng-template>
+      <br />
+    </span>
+    <span class="link-like-text" (click)="today.isClosed = !today.isClosed">Kevesebb megjelenítése...</span>
+  </ng-template>
+  <div *ngIf="place.description" style="margin-top: 20px;">
+    <span>{{place.description}}</span>
+  </div>
+</mat-card>
+<div class="scrolling-wrapper" [ngStyle]="{'overflow-x': mapSize.isScreenSmaller ? 'hidden' : 'scroll'}">
+  <svg [attr.width]="mapSize.width" [attr.height]="mapSize.height" class="floor-map"
+    [ngStyle]="mapSize.isScreenSmaller">
+    <g *ngFor="let table of circles" (click)="reservationDialog(table.id, table.reservation)">
+      <circle
+        [ngClass]="{'free-table': !table.reservation,
+       'reserved-table': table.reservation, 'my-table': table.reservation && table.reservation.userId === userId || !userId}"
+        [attr.cx]="table.x" [attr.cy]="table.y" [attr.r]="table.radius" />
+      <text [attr.x]="table.x" [attr.y]="table.y">
+        <ng-container *ngIf="table.reservation; else reservedText">
+          <tspan [attr.x]="table.x" dy="-0.6em">{{table.reservation.userName}}</tspan>
+          <tspan [attr.x]="table.x" dy="1.2em">{{table.reservation.date | date:'HH:mm'}}</tspan>
+        </ng-container>
+        <ng-template #reservedText>{{table.seats}} hely</ng-template>
+      </text>
+    </g>
+    <g *ngFor="let table of rects" (click)="reservationDialog(table.id, table.reservation)">
+      <rect [ngClass]="{'free-table': !table.reservation, 'reserved-table': table.reservation, 
+      'my-table': table.reservation && table.reservation.userId === userId || !userId}" [attr.x]="table.x"
+        [attr.y]="table.y" [attr.width]="table.width" [attr.height]="table.height" />
+      <text [attr.x]="table.x + table.width/2" [attr.y]="table.y + table.height/2">
+        <ng-container *ngIf="table.reservation; else reservedText">
+          <tspan [attr.x]="table.x + table.width/2" dy="-0.6em">{{table.reservation.userName}}</tspan>
+          <tspan [attr.x]="table.x + table.width/2" dy="1.2em">{{table.reservation.date | date:'HH:mm'}}</tspan>
+        </ng-container>
+        <ng-template #reservedText>{{table.seats}} hely</ng-template>
+      </text>
+    </g>
+  </svg>
 </div>
-
-<mat-form-field>
+<mat-form-field class="fab-bottom-right" style="width:1px;visibility:hidden;">
   <input matInput [matDatepicker]="picker" [formControl]="date" (dateChange)="getReservations()">
   <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
   <mat-datepicker #picker></mat-datepicker>
 </mat-form-field>
-<svg #svgCanvas [attr.height]="height" [attr.width]="width">
-  <g *ngFor="let table of circles" (click)="reservationDialog(table.id, table.reservation)">
-    <circle
-      [ngClass]="{'selected-table': selectedTable == table.id, 'free-table': !table.reservation,
-       'reserved-table': table.reservation, 'my-table': table.reservation && table.reservation.userId === userId || !userId}"
-      [attr.cx]="table.x" [attr.cy]="table.y" [attr.r]="table.radius" />
-    <text [attr.x]="table.x" [attr.y]="table.y" font-size="14">
-      <ng-container *ngIf="table.reservation; else reservedText">
-        <tspan [attr.x]="table.x" dy="-0.6em">{{table.reservation.userName}}</tspan>
-        <tspan [attr.x]="table.x" dy="1.2em">{{table.reservation.date | date:'HH:mm'}}</tspan>
-      </ng-container>
-      <ng-template #reservedText>{{table.seats}} hely</ng-template>
-    </text>
-  </g>
-  <g *ngFor="let table of rects" (click)="reservationDialog(table.id, table.reservation)">
-    <rect [ngClass]="{'selected-table': selectedTable == table.id, 'free-table': !table.reservation, 'reserved-table': table.reservation, 
-      'my-table': table.reservation && table.reservation.userId === userId || !userId}" [attr.x]="table.x"
-      [attr.y]="table.y" [attr.width]="table.width" [attr.height]="table.height" />
-    <text [attr.x]="table.x + table.width/2" [attr.y]="table.y + table.height/2" [attr.font-size]="fontSize">
-      <ng-container *ngIf="table.reservation; else reservedText">
-        <tspan [attr.x]="table.x + table.width/2" dy="-0.6em">{{table.reservation.userName}}</tspan>
-        <tspan [attr.x]="table.x + table.width/2" dy="1.2em">{{table.reservation.date | date:'HH:mm'}}</tspan>
-      </ng-container>
-      <ng-template #reservedText>{{table.seats}} hely</ng-template>
-    </text>
-  </g>
-</svg>
+
+<button class="fab-bottom-right" mat-fab color="primary" (click)="picker.open()">
+  <mat-icon>today</mat-icon>
+</button>

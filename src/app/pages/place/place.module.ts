@@ -1,3 +1,6 @@
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PlaceComponent } from './place.component';
@@ -23,6 +26,9 @@ const routes: Routes = [
     MatInputModule,
     ReactiveFormsModule,
     MatNativeDateModule,
+    MatCardModule,
+    MatIconModule,
+    MatButtonModule,
     RouterModule.forChild(routes),
   ],
 })

@@ -1,3 +1,5 @@
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MOCK_TABLES, Table } from './../../models/table';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -10,6 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { PlaceComponent } from './place.component';
+import { MatCardModule } from '@angular/material/card';
 
 describe('PlaceComponent', () => {
   let component: PlaceComponent;
@@ -29,6 +32,9 @@ describe('PlaceComponent', () => {
         FormsModule,
         ReactiveFormsModule,
         BrowserAnimationsModule,
+        MatCardModule,
+        MatIconModule,
+        MatButtonModule,
       ],
       declarations: [PlaceComponent],
       providers: [
@@ -41,6 +47,9 @@ describe('PlaceComponent', () => {
         FormsModule,
         ReactiveFormsModule,
         BrowserAnimationsModule,
+        MatCardModule,
+        MatIconModule,
+        MatButtonModule,
       ],
     }).compileComponents();
   }));
@@ -66,7 +75,7 @@ describe('PlaceComponent', () => {
   });
 
   it('should createFloorMap sort circle and rectange shaped tables', () => {
-    component.tables = [...MOCK_TABLES, {shape: 'someBadShape'}];
+    component.tables = [...MOCK_TABLES, { shape: 'someBadShape' }];
     component.createFloorMap();
     expect(component.circles).toEqual(circles);
     expect(component.rects).toEqual(rects);
